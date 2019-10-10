@@ -1,0 +1,32 @@
+{
+    "name": "indextank/yii2-plugin-env",
+    "description": "PHP DotEnv for Yii2 framework",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","dotenv",".env"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "huige",
+            "email": "nginx11724@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "yiisoft/yii2": "*",
+        "vlucas/phpdotenv": "^2.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "indextank\\dotenv\\": "src/"
+        },
+        "files": ["src/autoload.php"]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "tests\\": "tests/"
+        }
+    }
+}
