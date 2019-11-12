@@ -56,6 +56,9 @@ if (!function_exists('p')) {
         } else {
             print_r($array);
         }
+		echo "<br/><br/>";
+        echo "-----------------------------";
+        echo "<br/>";
     }
 }
 
