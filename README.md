@@ -9,8 +9,10 @@ Yii2 DotEnv
 Yii 2 框架添加.env功能，实现类似于Lavaral框架中的.env功能。使框架配置更简单，更利于维护。本项目基于yiithings/yii2-dotenv。
 
 本项目内含2个全局调试方法: p()和dd()，替代print_r();
+```
 p():打印变量，支持数组，格式化显示，不中断打印后续的输出，类似于:echo "<pre>";print_r(xxx);
 dd():打印变量，支持数组，格式化显示，中断打印后续的输出，类似于:echo "<pre>";print_r(xxx);exit()
+```
 
 Installation
 ------------
