@@ -10,7 +10,7 @@ use indextank\dotenv\Loader;
 /*
  * Prevent duplicate definition of the same name function.
  */
-if (!function_exists('env')) {
+if (!function_exists('penv')) {
     /**
      * Get a value from environment variable.
      *
@@ -18,7 +18,7 @@ if (!function_exists('env')) {
      * @param bool   $default
      * @return array|bool|false|string
      */
-    function env($name, $default = false)
+    function penv($name, $default = false)
     {
         static $loaded = null;
         if ($loaded === null) {
