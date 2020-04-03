@@ -7,6 +7,18 @@
 
 use indextank\dotenv\Loader;
 
+if (! function_exists('value')) {
+    /**
+     * Return the default value of the given value.
+     *
+     * @param mixed $value
+     */
+    function value($value)
+    {
+        return $value instanceof \Closure ? $value() : $value;
+    }
+}
+
 /*
  * Prevent duplicate definition of the same name function.
  */
@@ -41,6 +53,26 @@ if (!function_exists('penv')) {
             }
         }
         $value = getenv($name);
+        if ($value === false) {
+            return value($default);
+        }
+        switch (strtolower($value)) {
+//            case 'true':
+//            case '(true)':
+//                return true;
+//            case 'false':
+//            case '(false)':
+//                return false;
+            case 'empty':
+            case '(empty)':
+                return '';
+            case 'null':
+            case '(null)':
+                return;
+        }
+        if (($valueLength = strlen($value)) > 1 && $value[0] === '"' && $value[$valueLength - 1] === '"') {
+            return substr($value, 1, -1);
+        }
 
         return $value ? $value : $default;
     }
@@ -63,6 +95,21 @@ if (!function_exists('p')) {
 }
 
 
+if (!function_exists('pp')) {
+    function pp($name, $value)
+    {
+        echo "<pre>";
+
+        print_r(string_pd($name));
+        echo ' -------- ';
+        print_r(string_pd($value));
+
+        echo "<br/><br/>";
+        echo "-----------------------------";
+        echo "<br/>";
+    }
+}
+
 if (!function_exists('dd')) {
     function dd(...$array)
     {
@@ -74,5 +121,23 @@ if (!function_exists('dd')) {
             print_r($array);
         }
         exit();
+    }
+}
+
+if (!function_exists('string_pd')) {
+    function string_pd($value) {
+        if ($value != '') {
+            if (is_string($value)) {
+                return $value;
+            } else if (is_array($value)) {
+                if (count($value) == 1) {
+                    return $value[0];
+                } else {
+                    return $value;
+                }
+            }
+        }
+
+        return '';
     }
 }
