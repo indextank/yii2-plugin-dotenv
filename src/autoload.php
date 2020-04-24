@@ -6,107 +6,51 @@
  */
 
 use indextank\dotenv\Loader;
+use indextank\dotenv\Env;
+
+if (! function_exists('penv')) {
+    /**
+     * Gets the value of an environment variable.
+     *
+     * @param  string  $key
+     * @param  mixed  $default
+     * @return mixed
+     */
+    function penv($key, $default = null)
+    {
+        return Env::get($key, $default);
+    }
+}
 
 if (! function_exists('value')) {
     /**
      * Return the default value of the given value.
      *
-     * @param mixed $value
+     * @param  mixed  $value
+     * @return mixed
      */
     function value($value)
     {
-        return $value instanceof \Closure ? $value() : $value;
-    }
-}
-
-/*
- * Prevent duplicate definition of the same name function.
- */
-if (!function_exists('penv')) {
-    /**
-     * Get a value from environment variable.
-     *
-     * @param string $name
-     * @param bool   $default
-     * @return array|bool|false|string
-     */
-    function penv($name, $default = false)
-    {
-        static $loaded = null;
-        if ($loaded === null) {
-            /**
-             * If the constant DISABLE_DOTENV_LOAD is defined as true, any .env
-             * files is not loaded.
-             *
-             * if (YII_ENV == 'prod') {
-             *     define('DISABLE_DOTENV_LOAD', true)
-             * }
-             */
-            if (defined('DISABLE_DOTENV_LOAD') && DISABLE_DOTENV_LOAD) {
-                $loaded = false;
-            } else {
-                Loader::load(
-                    defined('DOTENV_PATH') ? DOTENV_PATH : '',
-                    defined('DOTENV_FILE') ? DOTENV_FILE : '',
-                    defined('DOTENV_OVERLOAD') ? DOTENV_OVERLOAD : false);
-                $loaded = true;
-            }
-        }
-        $value = getenv($name);
-        if ($value === false) {
-            return value($default);
-        }
-        switch (strtolower($value)) {
-//            case 'true':
-//            case '(true)':
-//                return true;
-//            case 'false':
-//            case '(false)':
-//                return false;
-            case 'empty':
-            case '(empty)':
-                return '';
-            case 'null':
-            case '(null)':
-                return;
-        }
-        if (($valueLength = strlen($value)) > 1 && $value[0] === '"' && $value[$valueLength - 1] === '"') {
-            return substr($value, 1, -1);
-        }
-
-        return $value ? $value : $default;
+        return $value instanceof Closure ? $value() : $value;
     }
 }
 
 if (!function_exists('p')) {
-    function p(...$array)
+    function p($name, $value = '')
     {
-        echo "<pre>";
-
-        if (count($array) == 1) {
-            print_r($array[0]);
-        } else {
-            print_r($array);
-        }
-		echo "<br/><br/>";
-        echo "-----------------------------";
-        echo "<br/>";
-    }
-}
-
-
-if (!function_exists('pp')) {
-    function pp($name, $value)
-    {
-        echo "<pre>";
+        echo "<br/><pre>";
 
         print_r(string_pd($name));
-        echo ' -------- ';
-        print_r(string_pd($value));
 
-        echo "<br/><br/>";
-        echo "-----------------------------";
-        echo "<br/>";
+        if ($value != '') {
+            echo "\n\n--------------\n";
+            print_r(string_pd($value));
+
+            echo "<br/><br/>";
+        }
+
+        echo "------------ // 打印输出结束 // ------------";
+        echo "</pre>";
     }
 }
 
@@ -120,6 +64,8 @@ if (!function_exists('dd')) {
         } else {
             print_r($array);
         }
+
+        echo "</pre>";
         exit();
     }
 }
