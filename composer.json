@@ -20,9 +20,6 @@
         },
         "files": ["src/autoload.php"]
     },
-    "require-dev": {
-        "phpunit/phpunit": "^8.4|^9.0"
-    },
     "autoload-dev": {
         "psr-4": {
             "tests\\": "tests/"

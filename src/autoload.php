@@ -16,9 +16,30 @@ if (! function_exists('penv')) {
      * @param  mixed  $default
      * @return mixed
      */
-    function penv($key, $default = null)
+    function penv($name, $default = false)
     {
-        return Env::get($key, $default);
+        static $loaded = null;
+        if ($loaded === null) {
+            /**
+             * If the constant DISABLE_DOTENV_LOAD is defined as true, any .env
+             * files is not loaded.
+             *
+             * if (YII_ENV == 'prod') {
+             *     define('DISABLE_DOTENV_LOAD', true)
+             * }
+             */
+            if (defined('DISABLE_DOTENV_LOAD') && DISABLE_DOTENV_LOAD) {
+                $loaded = false;
+            } else {
+                Loader::load(
+                    defined('DOTENV_PATH') ? DOTENV_PATH : '',
+                    defined('DOTENV_FILE') ? DOTENV_FILE : '');
+                $loaded = true;
+            }
+        }
+        $value = getenv($name);
+
+        return $value ? $value : $default;
     }
 }
 
@@ -55,20 +76,31 @@ if (!function_exists('p')) {
 }
 
 if (!function_exists('dd')) {
-    function dd(...$array)
+    function dd(...$vars)
     {
-        echo "<pre>";
-
-        if (count($array) == 1) {
-            print_r($array[0]);
-        } else {
-            print_r($array);
+        foreach ($vars as $v) {
+            VarDumper::dump($v);
         }
 
-        echo "</pre>";
-        exit();
+        exit(1);
     }
 }
+
+//if (!function_exists('dd')) {
+//    function dd(...$array)
+//    {
+//        echo "<pre>";
+//
+//        if (count($array) == 1) {
+//            print_r($array[0]);
+//        } else {
+//            print_r($array);
+//        }
+//
+//        echo "</pre>";
+//        exit();
+//    }
+//}
 
 if (!function_exists('string_pd')) {
     function string_pd($value) {

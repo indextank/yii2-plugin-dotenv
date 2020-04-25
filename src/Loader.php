@@ -5,6 +5,7 @@ namespace indextank\dotenv;
 use Yii;
 use Dotenv\Dotenv;
 use yii\base\Component;
+use yii\web\NotFoundHttpException;
 
 class Loader extends Component
 {
@@ -13,10 +14,9 @@ class Loader extends Component
      *
      * @param string $path
      * @param string $file
-     * @param bool   $overload
      * @return bool
      */
-    public static function load($path = '', $file = '.env', $overload = false)
+    public static function load($path = '', $file = '.env')
     {
         /*
          * Find Composer base directory.
@@ -60,23 +60,48 @@ class Loader extends Component
         if (empty($file)) {
             $file = '.env';
         }
+
         /*
          * This program will not force the file to be loaded,
          * if the file does not exist then return.
          */
-        if (!file_exists(rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file)) {
-            return false;
+        $fileDir = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+        if (!file_exists($fileDir . $file)) {
+            throw new NotFoundHttpException("Params file {$fileDir} . {$file} not found");
         }
-        $dotEnv = new DotEnv($path, $file);
-        /*
-         * Overload or load method by environment variable COMPOSER_DOTENV_OVERLOAD.
-         */
-        if ($overload) {
-            $dotEnv->overload();
-        } else {
-            $dotEnv->load();
+
+        try {
+            if (preg_match('~\.ini$~', $fileDir . $file)) {
+                return self::loadIniFile();
+            }
+
+            if (preg_match('~(\.env(\.|$))~', $fileDir . $file)) {
+                self::loadDotEnvFile($fileDir);
+            }
+        } catch (\Exception $e) {
+            throw new NotFoundHttpException("Failed loading params from $fileDir . $file\n" . $e->getMessage());
         }
 
         return true;
+    }
+
+    protected static function loadDotEnvFile($fileDir)
+    {
+        if (class_exists('Dotenv\Dotenv')) {
+            $dotenv = \Dotenv\Dotenv::createImmutable($fileDir);
+            $dotenv->load();
+            return $_SERVER;
+        }
+
+        throw new NotFoundHttpException(
+            "`vlucas/phpdotenv` library is required to parse .env files.\n" .
+            "Please install it via composer: composer require vlucas/phpdotenv"
+        );
+    }
+
+    protected function loadIniFile($paramsFile)
+    {
+        return parse_ini_file($paramsFile);
     }
 }
