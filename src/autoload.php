@@ -8,38 +8,34 @@
 use indextank\dotenv\Loader;
 use indextank\dotenv\Env;
 
+if (! function_exists('env')) {
+    /**
+     * Gets the value of an environment variable.
+     *
+     * @param $name
+     * @param mixed $default
+     * @return mixed
+     */
+    function env($name, $default = false)
+    {
+        Loader::load();
+        $value = getenv($name);
+
+        return $value ? $value : $default;
+    }
+}
+
 if (! function_exists('penv')) {
     /**
      * Gets the value of an environment variable.
      *
-     * @param  string  $key
-     * @param  mixed  $default
+     * @param $name
+     * @param mixed $default
      * @return mixed
      */
     function penv($name, $default = false)
     {
-        static $loaded = null;
-        if ($loaded === null) {
-            /**
-             * If the constant DISABLE_DOTENV_LOAD is defined as true, any .env
-             * files is not loaded.
-             *
-             * if (YII_ENV == 'prod') {
-             *     define('DISABLE_DOTENV_LOAD', true)
-             * }
-             */
-            if (defined('DISABLE_DOTENV_LOAD') && DISABLE_DOTENV_LOAD) {
-                $loaded = false;
-            } else {
-                Loader::load(
-                    defined('DOTENV_PATH') ? DOTENV_PATH : '',
-                    defined('DOTENV_FILE') ? DOTENV_FILE : '');
-                $loaded = true;
-            }
-        }
-        $value = getenv($name);
-
-        return $value ? $value : $default;
+        return \env($name, $default);
     }
 }
 
@@ -70,7 +66,19 @@ if (!function_exists('p')) {
             echo "<br/><br/>";
         }
 
-        echo "------------ // 打印输出结束 // ------------";
+        echo "<br/>" . unicode_decode('\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u0020\u002f\u002f\u0020\u6253\u5370\u8f93\u51fa\u7ed3\u675f\u0020\u002f\u002f\u0020\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d');
+        echo "</pre>";
+    }
+}
+
+if (!function_exists('pp')) {
+    function pp($name, $value = '')
+    {
+        echo "<br/><pre>" . $name . unicode_decode('\u7ed3\u679c') . ": ";
+
+        print_r(string_pd($value));
+
+        echo "<br/>" . unicode_decode('\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u0020\u002f\u002f\u0020\u6253\u5370\u8f93\u51fa\u7ed3\u675f\u0020\u002f\u002f\u0020\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d\u002d');
         echo "</pre>";
     }
 }
@@ -79,28 +87,22 @@ if (!function_exists('dd')) {
     function dd(...$vars)
     {
         foreach ($vars as $v) {
-            VarDumper::dump($v);
+            \yii\helpers\VarDumper::dump($v);
         }
 
         exit(1);
     }
 }
 
-//if (!function_exists('dd')) {
-//    function dd(...$array)
-//    {
-//        echo "<pre>";
-//
-//        if (count($array) == 1) {
-//            print_r($array[0]);
-//        } else {
-//            print_r($array);
-//        }
-//
-//        echo "</pre>";
-//        exit();
-//    }
-//}
+if (!function_exists('unicode_decode')) {
+    function unicode_decode($name)
+    {
+        $json = '{"str":"' . $name . '"}';
+        $arr = json_decode($json, true);
+        if (empty($arr)) return '';
+        return $arr['str'];
+    }
+}
 
 if (!function_exists('string_pd')) {
     function string_pd($value) {
