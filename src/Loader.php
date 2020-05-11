@@ -85,8 +85,7 @@ class Loader extends Component
     {
         if (class_exists('Dotenv\Dotenv')) {
             $dotenv = \Dotenv\Dotenv::createImmutable($fileDir);
-            $dotenv->load();
-            return $_SERVER;
+            return $dotenv->load();
         }
 
         throw new NotFoundHttpException(
