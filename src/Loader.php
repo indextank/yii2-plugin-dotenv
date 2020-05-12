@@ -84,7 +84,20 @@ class Loader extends Component
     protected static function loadDotEnvFile($fileDir)
     {
         if (class_exists('Dotenv\Dotenv')) {
-            $dotenv = \Dotenv\Dotenv::createImmutable($fileDir);
+            //$dotenv = \Dotenv\Dotenv::createImmutable($fileDir);
+            //return $dotenv->load();
+            $repository = \Dotenv\Repository\RepositoryBuilder::create()
+                ->withReaders([
+                    new \Dotenv\Repository\Adapter\EnvConstAdapter(),
+                ])
+                ->withWriters([
+                    new \Dotenv\Repository\Adapter\EnvConstAdapter(),
+                    new \Dotenv\Repository\Adapter\PutenvAdapter(),
+                ])
+                ->immutable()
+                ->make();
+
+            $dotenv = \Dotenv\Dotenv::create($repository, $fileDir);
             return $dotenv->load();
         }
 
